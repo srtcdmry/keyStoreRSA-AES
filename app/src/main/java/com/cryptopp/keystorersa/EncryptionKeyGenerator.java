@@ -34,12 +34,8 @@ public class EncryptionKeyGenerator {
     private static final String KEY_STORE_PASSWORD = "KEY_STORE_PASSWORD";
     public static String KEY_ALIAS = "KEY_ALIAS";
 
-    public static void SetEncryptionKeyGenerator(String KEY_ALIAS1) {
-        KEY_ALIAS = KEY_ALIAS1;
-    }
-
     @TargetApi(Build.VERSION_CODES.M)
-    static SecurityKey generateSecretKey(KeyStore keyStore) {
+    public static SecurityKey generateSecretKey(KeyStore keyStore) {
 
         Log.e("ALIAS : ", KEY_ALIAS);
         try {
