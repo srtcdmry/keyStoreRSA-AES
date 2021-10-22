@@ -35,7 +35,7 @@ class SecurityKey {
             Cipher cipher = getCipher(Cipher.ENCRYPT_MODE);
 
             byte[] encrypted = cipher.doFinal(token.getBytes());
-            return Base64.encodeToString(encrypted, Base64.URL_SAFE);
+            return Base64.encodeToString(encrypted, Base64.DEFAULT);
         } catch (GeneralSecurityException e) {
             Timber.e(e);
         }
@@ -49,7 +49,7 @@ class SecurityKey {
         try {
             Cipher cipher = getCipher(Cipher.DECRYPT_MODE);
 
-            byte[] decoded = Base64.decode(encryptedToken, Base64.URL_SAFE);
+            byte[] decoded = Base64.decode(encryptedToken, Base64.DEFAULT);
             byte[] original = cipher.doFinal(decoded);
             return new String(original);
         } catch (GeneralSecurityException e) {
@@ -63,6 +63,7 @@ class SecurityKey {
         Cipher cipher;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
             cipher = Cipher.getInstance(AES_MODE_FOR_POST_API_23);
             cipher.init(mode, secretKey, new GCMParameterSpec(128, AES_MODE_FOR_POST_API_23.getBytes(), 0, 12));
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {

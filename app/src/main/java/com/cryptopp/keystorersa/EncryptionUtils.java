@@ -10,7 +10,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
 public class EncryptionUtils {
-
     public static String encrypt(Context context, String token) {
         SecurityKey securityKey = getSecurityKey(context);
         return securityKey != null ? securityKey.encrypt(token) : null;
@@ -22,20 +21,23 @@ public class EncryptionUtils {
     }
 
     private static SecurityKey getSecurityKey(Context context) {
+        EncryptionKeyGenerator encryptionKeyGenerator = new EncryptionKeyGenerator();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return EncryptionKeyGenerator.generateSecretKey(getKeyStore());
+            return encryptionKeyGenerator.generateSecretKey(getKeyStore());
         }
-     else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-        return EncryptionKeyGenerator.generateKeyPairPreM(context, getKeyStore());
-    } else {
-        return EncryptionKeyGenerator.generateSecretKeyPre18(context);
+//     else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//        return encryptionKeyGenerator.generateKeyPairPreM(context, getKeyStore());
+//    }
+
+        else {
+        return encryptionKeyGenerator.generateKeyPairPreM(context, getKeyStore());//generateSecretKeyPre18(context);
     }
 }
 
     private static KeyStore getKeyStore() {
         KeyStore keyStore = null;
         try {
-            keyStore = KeyStore.getInstance(EncryptionKeyGenerator.ANDROID_KEY_STORE);
+            keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
         } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
             e.printStackTrace();
@@ -44,10 +46,11 @@ public class EncryptionUtils {
     }
 
     public static void clear() {
+        EncryptionKeyGenerator encryptionKeyGenerator = new EncryptionKeyGenerator();
         KeyStore keyStore = getKeyStore();
         try {
-            if (keyStore.containsAlias(EncryptionKeyGenerator.KEY_ALIAS)) {
-                keyStore.deleteEntry(EncryptionKeyGenerator.KEY_ALIAS);
+            if (keyStore.containsAlias(encryptionKeyGenerator.KEY_ALIAS)) {
+                keyStore.deleteEntry(encryptionKeyGenerator.KEY_ALIAS);
             }
         } catch (KeyStoreException e) {
             e.printStackTrace();
